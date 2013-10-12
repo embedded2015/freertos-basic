@@ -1,5 +1,5 @@
 CROSS_COMPILE=arm-none-eabi-
-QEMU_STM32 ?= ../qemu_stm32/arm-softmmu/qemu-system-arm
+QEMU_STM32 ?= ../../qemu_stm32/arm-softmmu/qemu-system-arm
 
 ARCH=CM3
 VENDOR=ST
