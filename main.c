@@ -17,7 +17,8 @@ extern const char _sromfs;
 static void setup_hardware();
 
 volatile xSemaphoreHandle serial_tx_wait_sem = NULL;
-
+/* Add for serial input */
+volatile xQueueHandle serial_rx_queue = NULL;
 
 /* IRQ handler to handle USART2 interruptss (both transmit and receive
  * interrupts). */
@@ -35,6 +36,12 @@ void USART2_IRQHandler()
 		/* Diables the transmit interrupt. */
 		USART_ITConfig(USART2, USART_IT_TXE, DISABLE);
 		/* If this interrupt is for a receive... */
+	}else if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET){
+		char msg = USART_ReceiveData(USART2);
+
+		/* If there is an error when queueing the received byte, freeze! */
+		if(!xQueueSendToBackFromISR(serial_rx_queue, &msg, &xHigherPriorityTaskWoken))
+			while(1);
 	}
 	else {
 		/* Only transmit and receive interrupts should be enabled.
@@ -63,11 +70,21 @@ void send_byte(char ch)
 	USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
 }
 
+char recv_byte()
+{
+	char msg;
+	while(!xQueueReceive(serial_rx_queue, &msg, portMAX_DELAY));
+	return msg;
+}
 void read_romfs_task(void *pvParameters)
 {
 	char buf[128];
 	size_t count;
 	int fd = fs_open("/romfs/test.txt", 0, O_RDONLY);
+	
+	//fio_read(0, buf, 5);
+	recv_byte();	
+//fio_write(1, buf, 5);
 	do {
 		//Read from /romfs/test.txt to buffer
 		count = fio_read(fd, buf, sizeof(buf));
@@ -93,6 +110,9 @@ int main()
 	/* Create the queue used by the serial task.  Messages for write to
 	 * the RS232. */
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
+	/* Add for serial input 
+	 * Reference: www.freertos.org/a00116.html */
+	serial_rx_queue = xQueueCreate(1, sizeof(char));
 
 	/* Create a task to output text read from romfs. */
 	xTaskCreate(read_romfs_task,
