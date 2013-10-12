@@ -72,26 +72,13 @@ void send_byte(char ch)
 
 char recv_byte()
 {
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 	char msg;
 	while(!xQueueReceive(serial_rx_queue, &msg, portMAX_DELAY));
 	return msg;
 }
-void read_romfs_task(void *pvParameters)
+void command_prompt(void *pvParameters)
 {
-	char buf[128];
-	size_t count;
-	int fd = fs_open("/romfs/test.txt", 0, O_RDONLY);
-	
-	//fio_read(0, buf, 5);
-	recv_byte();	
-//fio_write(1, buf, 5);
-	do {
-		//Read from /romfs/test.txt to buffer
-		count = fio_read(fd, buf, sizeof(buf));
-		
-		//Write buffer to fd 1 (stdout, through uart)
-		fio_write(1, buf, count);
-	} while (count);
 	
 	while (1);
 }
@@ -115,8 +102,8 @@ int main()
 	serial_rx_queue = xQueueCreate(1, sizeof(char));
 
 	/* Create a task to output text read from romfs. */
-	xTaskCreate(read_romfs_task,
-	            (signed portCHAR *) "Read romfs",
+	xTaskCreate(command_prompt,
+	            (signed portCHAR *) "Command Prompt",
 	            512 /* stack size */, NULL, tskIDLE_PRIORITY + 2, NULL);
 
 	/* Start running the tasks. */
