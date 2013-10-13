@@ -11,13 +11,24 @@ static struct fddef_t fio_fds[MAX_FDS];
 
 /* recv_byte is define in main.c */
 char recv_byte();
-char send_byte();
+void send_byte(char);
 
+/* Imple */
 static ssize_t stdin_read(void * opaque, void * buf, size_t count) {
     int i;
-    for (i = 0; i < count; i++)
+    for (i = 0; i < count; i++){
 	((char *)buf)[i]=recv_byte();
-    return count;
+	send_byte(((char *)buf)[i]);
+	switch(((char *)buf)[i]){
+		case '\r':
+		case '\n':
+			((char *)buf)[i]='\0';
+			--i;
+			break;
+		default:;
+	}
+    }
+    return i;
 }
 
 static ssize_t stdout_write(void * opaque, const void * buf, size_t count) {
