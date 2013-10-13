@@ -18,15 +18,11 @@ static ssize_t stdin_read(void * opaque, void * buf, size_t count) {
     int i;
     for (i = 0; i < count; i++){
 	((char *)buf)[i]=recv_byte();
+	if(((char *)buf)[i]=='\r'||((char *)buf)[i]=='\n'){
+		((char *)buf)[i]='\0';
+		break;
+	}	
 	send_byte(((char *)buf)[i]);
-	switch(((char *)buf)[i]){
-		case '\r':
-		case '\n':
-			((char *)buf)[i]='\0';
-			--i;
-			break;
-		default:;
-	}
     }
     return i;
 }
