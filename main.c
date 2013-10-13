@@ -83,7 +83,15 @@ char recv_byte()
 }
 void command_prompt(void *pvParameters)
 {
-	while (1);
+	char buf[128];
+	fio_printf(1, "\rWelcome to FreeRTOS Shell\r\n");
+	while(1){
+		fio_printf(1, "\r>>");
+		fio_read(0, buf, 127);
+	
+		fio_printf(1, "\r\n%s=what you type\r\n", buf);	
+	}
+
 }
 
 int main()
