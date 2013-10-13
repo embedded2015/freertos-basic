@@ -50,12 +50,12 @@ main.bin: test-romfs.o main.c
 		hash-djb2.c \
 		filesystem.c \
 		fio.c \
-		clib.c \
 		\
 		osdebug.c \
 		string-util.c \
 		\
-		main.c
+		main.c \
+		clib.c
 	$(CROSS_COMPILE)ld -Tmain.ld -nostartfiles -o main.elf \
 		core_cm3.o \
 		system_stm32f10x.o \
@@ -75,6 +75,7 @@ main.bin: test-romfs.o main.c
 		\
 		osdebug.o \
 		string-util.o \
+		clib.o \
 		\
 		main.o
 	$(CROSS_COMPILE)objcopy -Obinary main.elf main.bin
