@@ -1,6 +1,6 @@
 #define USE_STDPERIPH_DRIVER
 #include "stm32f10x.h"
-
+#include "stm32_p103.h"
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -11,8 +11,12 @@
 /* Filesystem includes */
 #include "filesystem.h"
 #include "fio.h"
+#include "romfs.h"
 
-extern const char _sromfs;
+/* _sromfs symbol can be found in main.ld linker script
+ * it contains file system structure of test_romfs directory
+ */
+extern const unsigned char _sromfs;
 
 static void setup_hardware();
 
@@ -79,7 +83,6 @@ char recv_byte()
 }
 void command_prompt(void *pvParameters)
 {
-	
 	while (1);
 }
 

@@ -9,6 +9,10 @@
 
 static struct fddef_t fio_fds[MAX_FDS];
 
+/* recv_byte is define in main.c */
+char recv_byte();
+char send_byte();
+
 static ssize_t stdin_read(void * opaque, void * buf, size_t count) {
     int i;
     for (i = 0; i < count; i++)
