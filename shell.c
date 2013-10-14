@@ -1,6 +1,9 @@
 #include "shell.h"
 #include <stddef.h>
 #include "clib.h"
+#include <string.h>
+#include "fio.h"
+#include "filesystem.h"
 
 typedef struct {
 	const char *name;
@@ -38,6 +41,25 @@ void man_command(int n, char *argv[]){
 		fio_printf(2, "\r\nUsage: man <command>\r\n");
 		return;
 	}
+
+	char buf[128]="/romfs/manual/";
+	strcat(buf, argv[1]);
+
+	int fd=fs_open(buf, 0, O_RDONLY);
+
+	if(fd==OPENFAIL){
+		fio_printf(2, "\r\nManual not available\r\n");
+		return;
+	}
+
+	fio_printf(1, "\r\n");
+
+	int count;
+	while((count=fio_read(fd, buf, sizeof(buf)))>0){
+		fio_write(1, buf, count);
+	}
+
+	fio_close(fd);
 }
 
 cmdfunc *do_command(const char *cmd){
