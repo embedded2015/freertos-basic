@@ -67,3 +67,10 @@ char *strncpy(char *dest, const char *src, size_t n)
 	while (n-- && (*d++ = *s++));
 	return dest;
 }
+
+int strcmp(const char *a, const char *b)
+{
+        while(*a && (*a==*b))
+                ++a, ++b;
+        return *a-*b;
+}
