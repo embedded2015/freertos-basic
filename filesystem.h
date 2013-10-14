@@ -5,6 +5,7 @@
 #include <hash-djb2.h>
 
 #define MAX_FS 16
+#define OPENFAIL (-1)
 
 typedef int (*fs_open_t)(void * opaque, const char * fname, int flags, int mode);
 
