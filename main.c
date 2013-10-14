@@ -13,6 +13,9 @@
 #include "fio.h"
 #include "romfs.h"
 
+#include "clib.h"
+#include "shell.h"
+
 /* _sromfs symbol can be found in main.ld linker script
  * it contains file system structure of test_romfs directory
  */
@@ -84,12 +87,20 @@ char recv_byte()
 void command_prompt(void *pvParameters)
 {
 	char buf[128];
+	char *argv[20];
 	fio_printf(1, "\rWelcome to FreeRTOS Shell\r\n");
 	while(1){
 		fio_printf(1, "\r>>");
 		fio_read(0, buf, 127);
 	
-		fio_printf(1, "\r\n%s=what you type\r\n", buf);	
+		int n=parse_command(buf, argv);
+
+		/* will return pointer to the command function */
+		cmdfunc *fptr=do_command(argv[0]);
+		if(fptr!=NULL)
+			fptr(n, argv);
+		else
+			fio_printf(2, "\r\n\"%s\" command not found.\r\n", argv[0]);
 	}
 
 }
