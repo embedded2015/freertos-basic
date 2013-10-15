@@ -5,6 +5,9 @@
 #include "fio.h"
 #include "filesystem.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 typedef struct {
 	const char *name;
 	cmdfunc *fptr;
@@ -55,6 +58,12 @@ int filedump(const char *filename){
 	return 1;
 }
 
+void ps_command(int n, char *argv[]){
+	signed char buf[1024];
+	vTaskList(buf);
+	fio_printf(1, "\r\n%s\r\n", buf);	
+}
+
 void cat_command(int n, char *argv[]){
 	if(n==1){
 		fio_printf(2, "\r\nUsage: cat <filename>\r\n");
@@ -83,6 +92,7 @@ cmdfunc *do_command(const char *cmd){
 		{.name="ls", .fptr=ls_command, .desc="List directory"}
 		,{.name="man", .fptr=man_command, .desc="Show the manual of the command"}
 		,{.name="cat", .fptr=cat_command, .desc="concatenate files and print on the stdout"}
+		,{.name="ps", .fptr=ps_command, .desc="Report a snapshot of the current processes"}
 	};
 
 	int i;
