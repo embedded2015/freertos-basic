@@ -47,8 +47,9 @@ int sprintf(char *dest, const char *format, ...){
 
         int tmpint;
         char *tmpcharp;
+	char tmpchar;
 
-        for(i=0, p=0; format[i]; ++i, ++p){
+        for(i=0, p=0; format[i]; ++i){
                 if(format[i]=='%'){
                         switch(format[i+1]){
                                 case '%':
@@ -58,7 +59,7 @@ int sprintf(char *dest, const char *format, ...){
 				case 'u':
                                         tmpint = va_arg(v1, int);
                                         if(format[i+1]=='u')	
-						tmpcharp = utoa((unsigned)tmpint, format[i+1]);
+						tmpcharp = utoa((unsigned)tmpint, 10);
 					else
 						tmpcharp = itoa(tmpint, format[i+1]=='d'?10: 16);
                                         //fio_write(fd, tmpcharp, 3);i
@@ -69,9 +70,10 @@ int sprintf(char *dest, const char *format, ...){
                                         tmpcharp = va_arg(v1, char *);
 					for(;*tmpcharp;++tmpcharp, ++p)
 						dest[p]=*tmpcharp;
+					break;
 				case 'c':
-					tmpint = va_arg(v1, int);
-					dest[p++]=tmpint;
+					tmpchar = va_arg(v1, int);
+					dest[p++]=tmpchar;
                                         break;
                         }
                         /* Skip the next character */
