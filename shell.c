@@ -14,25 +14,41 @@ typedef struct {
 	const char *desc;
 } cmdlist;
 
-int parse_command(char *str, char *argv[]){
-        int b_quote=0, b_dbquote=0;
-        int i;
-        int count=0, p=0;
-        for(i=0; str[i]; ++i){
-                if(str[i]=='\'')
-                        ++b_quote;
-                if(str[i]=='"')
-                        ++b_dbquote;
-                if(str[i]==' '&&b_quote%2==0&&b_dbquote%2==0){
-                        str[i]='\0';
-                        argv[count++]=&str[p];
-                        p=i+1;
-                }
-        }
-        /* last one */
-        argv[count++]=&str[p];
+void ls_command(int, char **);
+void man_command(int, char **);
+void cat_command(int, char **);
+void ps_command(int, char **);
+void host_command(int, char **);
+void help_command(int, char **);
 
-        return count;
+cmdlist cl[]={
+	{.name="ls", .fptr=ls_command, .desc="List directory"}
+	,{.name="man", .fptr=man_command, .desc="Show the manual of the command"}
+	,{.name="cat", .fptr=cat_command, .desc="concatenate files and print on the stdout"}
+	,{.name="ps", .fptr=ps_command, .desc="Report a snapshot of the current processes"}
+	,{.name="host", .fptr=host_command, .desc="Run command on host"}
+	,{.name="help", .fptr=help_command, .desc="help"}
+};
+
+int parse_command(char *str, char *argv[]){
+	int b_quote=0, b_dbquote=0;
+	int i;
+	int count=0, p=0;
+	for(i=0; str[i]; ++i){
+		if(str[i]=='\'')
+			++b_quote;
+		if(str[i]=='"')
+			++b_dbquote;
+		if(str[i]==' '&&b_quote%2==0&&b_dbquote%2==0){
+			str[i]='\0';
+			argv[count++]=&str[p];
+			p=i+1;
+		}
+	}
+	/* last one */
+	argv[count++]=&str[p];
+
+	return count;
 }
 
 void ls_command(int n, char *argv[]){
@@ -40,21 +56,21 @@ void ls_command(int n, char *argv[]){
 }
 
 int filedump(const char *filename){
-        char buf[128];
+	char buf[128];
 
-        int fd=fs_open(filename, 0, O_RDONLY);
+	int fd=fs_open(filename, 0, O_RDONLY);
 
-        if(fd==OPENFAIL)
-                return 0;
+	if(fd==OPENFAIL)
+		return 0;
 
-        fio_printf(1, "\r\n");
+	fio_printf(1, "\r\n");
 
-        int count;
-        while((count=fio_read(fd, buf, sizeof(buf)))>0){
-                fio_write(1, buf, count);
-        }
+	int count;
+	while((count=fio_read(fd, buf, sizeof(buf)))>0){
+		fio_write(1, buf, count);
+	}
 
-        fio_close(fd);
+	fio_close(fd);
 	return 1;
 }
 
@@ -87,15 +103,22 @@ void man_command(int n, char *argv[]){
 		fio_printf(2, "\r\nManual not available.\r\n");
 }
 
+void host_command(int n, char *argv[]){
+
+}
+
+void help_command(int n,char *argv[]){
+	int i;
+	fio_printf(1, "\r\n");
+	for(i=0;i<sizeof(cl)/sizeof(cl[0]); ++i){
+		fio_printf(1, "%s - %s\r\n", cl[i].name, cl[i].desc);
+	}
+}
+
 cmdfunc *do_command(const char *cmd){
-	static cmdlist cl[]={
-		{.name="ls", .fptr=ls_command, .desc="List directory"}
-		,{.name="man", .fptr=man_command, .desc="Show the manual of the command"}
-		,{.name="cat", .fptr=cat_command, .desc="concatenate files and print on the stdout"}
-		,{.name="ps", .fptr=ps_command, .desc="Report a snapshot of the current processes"}
-	};
 
 	int i;
+
 	for(i=0; i<sizeof(cl)/sizeof(cl[0]); ++i){
 		if(strcmp(cl[i].name, cmd)==0)
 			return cl[i].fptr;
