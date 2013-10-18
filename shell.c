@@ -7,6 +7,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "host.h"
 
 typedef struct {
 	const char *name;
@@ -20,6 +21,7 @@ void cat_command(int, char **);
 void ps_command(int, char **);
 void host_command(int, char **);
 void help_command(int, char **);
+void host_command(int, char **);
 
 cmdlist cl[]={
 	{.name="ls", .fptr=ls_command, .desc="List directory"}
@@ -104,7 +106,16 @@ void man_command(int n, char *argv[]){
 }
 
 void host_command(int n, char *argv[]){
-
+	if(n>1){
+		int len=strlen(argv[1]);
+		if(argv[1][0]=='\''){
+			argv[1][len-1]='\0';
+			host_system(argv[1]+1);
+		}else
+			host_system(argv[1]);
+		fio_printf(1, "\r\n");
+	}else
+		fio_printf(2, "\r\nUsage: host 'command'\r\n");
 }
 
 void help_command(int n,char *argv[]){
