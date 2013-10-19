@@ -23,13 +23,15 @@ void host_command(int, char **);
 void help_command(int, char **);
 void host_command(int, char **);
 
+#define mkcl(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
+
 cmdlist cl[]={
-	{.name="ls", .fptr=ls_command, .desc="List directory"}
-	,{.name="man", .fptr=man_command, .desc="Show the manual of the command"}
-	,{.name="cat", .fptr=cat_command, .desc="concatenate files and print on the stdout"}
-	,{.name="ps", .fptr=ps_command, .desc="Report a snapshot of the current processes"}
-	,{.name="host", .fptr=host_command, .desc="Run command on host"}
-	,{.name="help", .fptr=help_command, .desc="help"}
+	mkcl(ls, "List directory"),
+	mkcl(man, "Show the manual of the command"),
+	mkcl(cat, "Concatenate files and print on the stdout"),
+	mkcl(ps, "Report a snapshot of the current processes"),
+	mkcl(host, "Run command on host"),
+	mkcl(help, "help")
 };
 
 int parse_command(char *str, char *argv[]){
