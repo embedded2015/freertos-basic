@@ -14,8 +14,8 @@ int sprnitf(char *, const char *, ...);
 
 /* I would like to rename itoa as to_string (idea from C++11) 
  * however c doesn't allow function overloading */
-char *itoa(int i, unsigned int base);
-char *utoa(unsigned int i, unsigned int base);
+char *itoa(const char *numbox, int i, unsigned int base);
+char *utoa(const char *numbox, unsigned int i, unsigned int base);
 
 char *strcat(char * restrict dest, const char * restrict source);
 size_t strlen(const char *str);

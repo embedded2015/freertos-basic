@@ -19,10 +19,10 @@ size_t fio_printf(int fd, const char *format, ...){
 				case '%':
 					send_byte('%'); break;
 				case 'd':
-				case 'X':
 				case 'x':
+				case 'X':
 					tmpint = va_arg(v1, int);
-					tmpcharp = itoa(tmpint, format[i+1]=='d'?10: 16);
+					tmpcharp = itoa(format[i+1]=='x'?"0123456789abcdef":"0123456789ABCDEF", tmpint, format[i+1]=='d'?10: 16);
 					fio_write(fd, tmpcharp, strlen(tmpcharp));
 					break;
 				case 's':
@@ -56,13 +56,14 @@ int sprintf(char *dest, const char *format, ...){
                                 case '%':
                                         dest[p++]='%'; break;
                                 case 'd':
-                                case 'X':
+                                case 'x':
+				case 'X':
 				case 'u':
                                         tmpint = va_arg(v1, int);
                                         if(format[i+1]=='u')	
-						tmpcharp = utoa((unsigned)tmpint, 10);
+						tmpcharp = utoa(format[i+1]=='X'?"0123456789ABCDEF":"0123456789abcdef" ,(unsigned)tmpint, 10);
 					else
-						tmpcharp = itoa(tmpint, format[i+1]=='d'?10: 16);
+						tmpcharp = itoa(format[i+1]=='X'?"0123456789ABCDEF":"0123456789abcdef", tmpint, format[i+1]=='d'?10: 16);
                                         //fio_write(fd, tmpcharp, 3);i
 					for(;*tmpcharp;++tmpcharp, ++p)
 						dest[p]=*tmpcharp;
@@ -105,7 +106,7 @@ char *strcat(char * restrict dest, const char * restrict source){
 	return dest;
 }
 
-char *itoa(int num, unsigned int base){
+char *itoa(const char *numbox, int num, unsigned int base){
 	static char buf[32]={0};
 	int i;
 	if(num==0){
@@ -115,7 +116,7 @@ char *itoa(int num, unsigned int base){
 	int negative=(num<0);
 	if(negative) num=-num;
 	for(i=30; i>=0&&num; --i, num/=base)
-		buf[i] = "0123456789ABCDEF" [num % base];
+		buf[i] = numbox[num % base];
 	if(negative){
 		buf[i]='-';
 		--i;
@@ -123,7 +124,7 @@ char *itoa(int num, unsigned int base){
 	return buf+i+1;
 }
 
-char *utoa(unsigned int num, unsigned int base){
+char *utoa(const char *numbox, unsigned int num, unsigned int base){
 	static char buf[32]={0};
 	int i;
 	if(num==0){
@@ -131,6 +132,6 @@ char *utoa(unsigned int num, unsigned int base){
 		return &buf[30];
 	}
 	for(i=30; i>=0&&num; --i, num/=base)
-		buf[i] = "0123456789ABCDEF" [num % base];
+		buf[i] = numbox [num % base];
 	return buf+i+1;
 }
