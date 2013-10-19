@@ -2,7 +2,7 @@
 
 typedef union param_t{
 	int pdInt;
-	const void *pdPtr;
+	void *pdPtr;
 	char *pdChrPtr;
 } param;
 
@@ -24,10 +24,6 @@ int host_call(enum HOST_SYSCALL action, void *argv)
     return result;
 }
 
-int host_system(const char *cmd){
-	param p[]={
-		{.pdChrPtr=cmd},
-		{.pdInt=strlen(cmd)}
-	};
-	return host_call(SYS_SYSTEM, p);
+int host_system(char *cmd){
+	return host_call(SYS_SYSTEM, (param []){{.pdChrPtr=cmd}, {.pdInt=strlen(cmd)}});
 }
