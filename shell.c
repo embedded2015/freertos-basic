@@ -107,13 +107,13 @@ void man_command(int n, char *argv[]){
 
 void host_command(int n, char *argv[]){
 	if(n>1){
-		int len=strlen(argv[1]);
+		int len=strlen(argv[1]), rnt;
 		if(argv[1][0]=='\''){
 			argv[1][len-1]='\0';
-			host_system(argv[1]+1);
+			rnt=host_system(argv[1]+1);
 		}else
-			host_system(argv[1]);
-		fio_printf(1, "\r\n");
+			rnt=host_system(argv[1]);
+		fio_printf(1, "\r\nfinish with exit code %d.\r\n", rnt);
 	}else
 		fio_printf(2, "\r\nUsage: host 'command'\r\n");
 }
