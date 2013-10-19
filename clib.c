@@ -22,7 +22,7 @@ size_t fio_printf(int fd, const char *format, ...){
 				case 'X':
 					tmpint = va_arg(v1, int);
 					tmpcharp = itoa(tmpint, format[i+1]=='d'?10: 16);
-					fio_write(fd, tmpcharp, 3);
+					fio_write(fd, tmpcharp, strlen(tmpcharp));
 					break;
 				case 's':
 					tmpcharp = va_arg(v1, char *);
