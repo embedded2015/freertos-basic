@@ -14,9 +14,11 @@ FREERTOS_SRC = $(CODEBASE)/libraries/FreeRTOS
 FREERTOS_INC = $(FREERTOS_SRC)/include/                                       
 FREERTOS_PORT_INC = $(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/
 
+HEAP_IMPLE = heap_2
+
 all: main.bin
 
-main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c
+main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c mmtest.c
 	$(CROSS_COMPILE)gcc \
 		-I. -I$(FREERTOS_INC) -I$(FREERTOS_PORT_INC) \
 		-I$(CODEBASE)/libraries/CMSIS/CM3/CoreSupport \
@@ -42,7 +44,7 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c
 		$(FREERTOS_SRC)/queue.c \
 		$(FREERTOS_SRC)/tasks.c \
 		$(FREERTOS_SRC)/portable/GCC/ARM_CM3/port.c \
-		$(FREERTOS_SRC)/portable/MemMang/heap_1.c \
+		$(FREERTOS_SRC)/portable/MemMang/$(HEAP_IMPLE).c \
 		\
 		stm32_p103.c \
 		\
@@ -57,7 +59,8 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c
 		main.c \
 		clib.c \
 		shell.c \
-		host.c
+		host.c \
+		mmtest.c
 	$(CROSS_COMPILE)ld -Tmain.ld -nostartfiles -o main.elf \
 		core_cm3.o \
 		system_stm32f10x.o \
@@ -69,7 +72,7 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c
 		misc.o \
 		\
 		croutine.o list.o queue.o tasks.o \
-		port.o heap_1.o \
+		port.o $(HEAP_IMPLE).o \
 		\
 		stm32_p103.o \
 		\
@@ -80,6 +83,7 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c
 		clib.o \
 		shell.o \
 		host.o \
+		mmtest.o \
 		\
 		main.o
 	$(CROSS_COMPILE)objcopy -Obinary main.elf main.bin
