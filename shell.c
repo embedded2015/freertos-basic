@@ -22,6 +22,7 @@ void ps_command(int, char **);
 void host_command(int, char **);
 void help_command(int, char **);
 void host_command(int, char **);
+void mmtest_command(int, char **);
 
 #define mkcl(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
 
@@ -31,6 +32,7 @@ cmdlist cl[]={
 	mkcl(cat, "Concatenate files and print on the stdout"),
 	mkcl(ps, "Report a snapshot of the current processes"),
 	mkcl(host, "Run command on host"),
+	mkcl(mmtest, "heap memory allocation test"),
 	mkcl(help, "help")
 };
 
