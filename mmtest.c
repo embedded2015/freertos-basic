@@ -48,13 +48,54 @@ static struct slot read_cb(void)
 
 
 // Get a pseudorandom number generator from Wikipedia
-static int prng(void)
-{
-    static unsigned int bit;
-    /* taps: 16 14 13 11; characteristic polynomial: x^16 + x^14 + x^13 + x^11 + 1 */
+static int prng(void) __attribute__((naked));
+static int prng(void){
+
+    /*static unsigned int bit;
+    // taps: 16 14 13 11; characteristic polynomial: x^16 + x^14 + x^13 + x^11 + 1 
     bit  = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5) ) & 1;
-    lfsr =  (lfsr >> 1) | (bit << 15);
-    return lfsr & 0xffff;
+    lfsr =  (lfsr >> 1) | (bit << 15);*/
+    //return lfsr & 0xffff;
+   
+    /* ASM Impletation
+	movt r3, higer 16 bits of &lfsr
+	movw r3, lower 16 bits of &lfsr
+	;r3=*r3 == lfsr
+	ldr r3, [r3, #0]
+	;r2 = r3 >> 2
+	mov.w r2, r3, lsr #2
+
+	movt r3, higer 16 bits of &lfsr
+	movw r3, lower 16 bits of &lfsr
+	ldr r3, [r3, #0]
+	(lfsr >> 0) ^ (lfsr >> 2)
+	eors r2, r3
+	...
+    */
+
+
+    __asm__ (
+	"mov r0, %1\t\n" // r0 = lfsr
+	"eor r3, r3\t\n" // r3 = 0 
+	"eor r3, r0\t\n" // r3 ^= lfsr
+	"mov r2, r0, lsr #2\t\n"
+	"eor r3, r2\t\n" // r3 ^= lfsr>>2 
+	"mov r2, r0, lsr #3\t\n"
+	"eor r3, r2\t\n" // r3 ^= lfsr>>3 
+	"mov r2, r0, lsr #5\t\n"
+	"eor r3, r2\t\n" // r3 ^= lfsr>>5 
+	"and r3, #0x1\t\n" //bit = r3 & 1
+	"mov r3, r3, lsl #15\t\n" //r3=bit<<15
+	"mov r2, r0, lsr #1\t\n" // r2= lfsr>>1
+	"orr r2, r3\t\n"
+	"mov %0, r2\t\n"
+	"mov r0, r2, lsl #16\t\n" // r0 = lfsr(r2) & 0xFFFF
+	"mov r0, r0, lsr #16\t\n"
+    : "=r" (lfsr)
+    : "r" (lfsr)
+    : "r2", "r0");
+
+    __asm__("bx lr\t\n");
 }
 
 
