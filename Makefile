@@ -14,7 +14,7 @@ FREERTOS_SRC = $(CODEBASE)/libraries/FreeRTOS
 FREERTOS_INC = $(FREERTOS_SRC)/include/                                       
 FREERTOS_PORT_INC = $(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/
 
-HEAP_IMPLE = heap_ww
+HEAP_IMPL = heap_ww
 
 all: main.bin
 
@@ -44,7 +44,7 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c mmtest.c
 		$(FREERTOS_SRC)/queue.c \
 		$(FREERTOS_SRC)/tasks.c \
 		$(FREERTOS_SRC)/portable/GCC/ARM_CM3/port.c \
-		$(FREERTOS_SRC)/portable/MemMang/$(HEAP_IMPLE).c \
+		$(FREERTOS_SRC)/portable/MemMang/$(HEAP_IMPL).c \
 		\
 		stm32_p103.c \
 		\
@@ -72,7 +72,7 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c mmtest.c
 		misc.o \
 		\
 		croutine.o list.o queue.o tasks.o \
-		port.o $(HEAP_IMPLE).o \
+		port.o $(HEAP_IMPL).o \
 		\
 		stm32_p103.o \
 		\
