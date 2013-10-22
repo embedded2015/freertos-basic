@@ -14,7 +14,7 @@ FREERTOS_SRC = $(CODEBASE)/libraries/FreeRTOS
 FREERTOS_INC = $(FREERTOS_SRC)/include/                                       
 FREERTOS_PORT_INC = $(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/
 
-HEAP_IMPLE = heap_2
+HEAP_IMPLE = heap_ww
 
 all: main.bin
 
