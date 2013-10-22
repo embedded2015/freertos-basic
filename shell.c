@@ -24,16 +24,16 @@ void help_command(int, char **);
 void host_command(int, char **);
 void mmtest_command(int, char **);
 
-#define mkcl(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
+#define MKCL(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
 
 cmdlist cl[]={
-	mkcl(ls, "List directory"),
-	mkcl(man, "Show the manual of the command"),
-	mkcl(cat, "Concatenate files and print on the stdout"),
-	mkcl(ps, "Report a snapshot of the current processes"),
-	mkcl(host, "Run command on host"),
-	mkcl(mmtest, "heap memory allocation test"),
-	mkcl(help, "help")
+	MKCL(ls, "List directory"),
+	MKCL(man, "Show the manual of the command"),
+	MKCL(cat, "Concatenate files and print on the stdout"),
+	MKCL(ps, "Report a snapshot of the current processes"),
+	MKCL(host, "Run command on host"),
+	MKCL(mmtest, "heap memory allocation test"),
+	MKCL(help, "help")
 };
 
 int parse_command(char *str, char *argv[]){
