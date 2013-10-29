@@ -26,7 +26,7 @@ main.bin: test-romfs.o main.c clib.c fio.c shell.c host.c mmtest.c
 		-I$(CODEBASE)/libraries/STM32F10x_StdPeriph_Driver/inc \
 		-fno-common -O0 \
 		-std=c99 -pedantic \
-		-gdwarf-2 -g3 \
+		-gdwarf-2 -ffreestanding -g3 \
 		-mcpu=cortex-m3 -mthumb \
 		-c \
 		\
