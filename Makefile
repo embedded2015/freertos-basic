@@ -109,9 +109,6 @@ qemudbg: main.bin $(QEMU_STM32)
 	$(QEMU_STM32) -M stm32-p103 \
 		-gdb tcp::3333 -S \
 		-kernel main.bin -semihosting
-		
-qemuauto: main.bin $(QEMU_STM32)
-	bash emulate.sh main.bin -semihosting
 
 clean:
 	rm -f *.o *.elf *.bin *.list mkromfs
