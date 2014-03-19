@@ -96,6 +96,8 @@ static int prng(void){
     : "r2", "r0");
 
     __asm__("bx lr\t\n");
+
+    return 0;
 }
 
 
