@@ -4,3 +4,6 @@ main.list
 *.o
 mkromfs
 test-romfs.bin
+*.swp
+*~
+build
