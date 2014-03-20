@@ -110,16 +110,22 @@ void man_command(int n, char *argv[]){
 }
 
 void host_command(int n, char *argv[]){
-	if(n>1){
-		int len=strlen(argv[1]), rnt;
-		if(argv[1][0]=='\''){
-			argv[1][len-1]='\0';
-			rnt=host_system(argv[1]+1);
-		}else
-			rnt=host_system(argv[1]);
-		fio_printf(1, "\r\nfinish with exit code %d.\r\n", rnt);
-	}else
-		fio_printf(2, "\r\nUsage: host 'command'\r\n");
+    int i, len = 0, rnt;
+    char command[128] = {0};
+
+    if(n>1){
+        for(i = 1; i < n; i++) {
+            memcpy(&command[len], argv[i], strlen(argv[i]));
+            len += (strlen(argv[i]) + 1);
+            command[len - 1] = ' ';
+        }
+        command[len - 1] = '\0';
+        rnt=host_system(command);
+        fio_printf(1, "\r\nfinish with exit code %d.\r\n", rnt);
+    } 
+    else {
+        fio_printf(2, "\r\nUsage: host 'command'\r\n");
+    }
 }
 
 void help_command(int n,char *argv[]){
