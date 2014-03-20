@@ -83,7 +83,9 @@ int filedump(const char *filename){
 void ps_command(int n, char *argv[]){
 	signed char buf[1024];
 	vTaskList(buf);
-	fio_printf(1, "\r\n%s\r\n", buf);	
+        fio_printf(1, "\n\rName          State   Priority  Stack  Num\n\r");
+        fio_printf(1, "*******************************************\n\r");
+	fio_printf(1, "%s\r\n", buf);	
 }
 
 void cat_command(int n, char *argv[]){

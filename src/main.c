@@ -125,7 +125,7 @@ int main()
 
 	/* Create a task to output text read from romfs. */
 	xTaskCreate(command_prompt,
-	            (signed portCHAR *) "Command Prompt",
+	            (signed portCHAR *) "CLI",
 	            512 /* stack size */, NULL, tskIDLE_PRIORITY + 2, NULL);
 
 	/* Start running the tasks. */
