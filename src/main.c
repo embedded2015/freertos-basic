@@ -15,6 +15,7 @@
 
 #include "clib.h"
 #include "shell.h"
+#include "host.h"
 
 /* _sromfs symbol can be found in main.ld linker script
  * it contains file system structure of test_romfs directory
@@ -107,6 +108,45 @@ void command_prompt(void *pvParameters)
 
 }
 
+void system_logger(void *pvParameters)
+{
+    signed char buf[128];
+    char output[512] = {0};
+    char *tag = "\nName          State   Priority  Stack  Num\n*******************************************\n";
+    int handle, error;
+    const portTickType xDelay = 100000 / 100;
+
+    handle = host_open("output/syslog", 4);
+    if(handle == -1) {
+        fio_printf(1, "Open file error!\n");
+        return;
+    }
+
+    while(1) {
+        memcpy(output, tag, strlen(tag));
+        error = host_write(handle, (void *)output, strlen(output));
+        if(error != 0) {
+            fio_printf(1, "Write file error! Remain %d bytes didn't write in the file.\n\r", error);
+            host_close(handle);
+            return;
+        }
+        vTaskList(buf);
+
+        memcpy(output, (char *)(buf + 2), strlen((char *)buf) - 2);
+
+        error = host_write(handle, (void *)buf, strlen((char *)buf));
+        if(error != 0) {
+            fio_printf(1, "Write file error! Remain %d bytes didn't write in the file.\n\r", error);
+            host_close(handle);
+            return;
+        }
+
+        vTaskDelay(xDelay);
+    }
+    
+    host_close(handle);
+}
+
 int main()
 {
 	init_rs232();
@@ -129,6 +169,11 @@ int main()
 	xTaskCreate(command_prompt,
 	            (signed portCHAR *) "CLI",
 	            512 /* stack size */, NULL, tskIDLE_PRIORITY + 2, NULL);
+
+	/* Create a task to record system log. */
+	xTaskCreate(system_logger,
+	            (signed portCHAR *) "Logger",
+	            1024 /* stack size */, NULL, tskIDLE_PRIORITY + 1, NULL);
 
 	/* Start running the tasks. */
 	vTaskStartScheduler();
