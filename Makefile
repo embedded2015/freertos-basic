@@ -40,6 +40,7 @@ INCDIR = include \
 INCLUDES = $(addprefix -I,$(INCDIR))
 DATDIR = data
 TOOLDIR = tool
+TMPDiR = output
 
 HEAP_IMPL = heap_ww
 SRC = $(wildcard $(addsuffix /*.c,$(SRCDIR))) \
@@ -83,7 +84,7 @@ $(OUTDIR)/%.o: %.s
 	@$(CROSS_COMPILE)gcc $(CFLAGS) -MMD -MF $@.d -o $@ -c $(INCLUDES) $<
 
 clean:
-	rm -rf $(OUTDIR)
+	rm -rf $(OUTDIR) $(TMPDIR)
 
 -include $(DEP)
 
