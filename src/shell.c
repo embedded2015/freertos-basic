@@ -23,6 +23,7 @@ void host_command(int, char **);
 void help_command(int, char **);
 void host_command(int, char **);
 void mmtest_command(int, char **);
+void test_command(int, char **);
 
 #define MKCL(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
 
@@ -33,7 +34,8 @@ cmdlist cl[]={
 	MKCL(ps, "Report a snapshot of the current processes"),
 	MKCL(host, "Run command on host"),
 	MKCL(mmtest, "heap memory allocation test"),
-	MKCL(help, "help")
+	MKCL(help, "help"),
+	MKCL(test, "test new function")
 };
 
 int parse_command(char *str, char *argv[]){
@@ -136,6 +138,29 @@ void help_command(int n,char *argv[]){
 	for(i=0;i<sizeof(cl)/sizeof(cl[0]); ++i){
 		fio_printf(1, "%s - %s\r\n", cl[i].name, cl[i].desc);
 	}
+}
+
+void test_command(int n, char *argv[]) {
+    int handle;
+    int error;
+
+    fio_printf(1, "\r\n");
+
+    handle = host_open("output/syslog", 8);
+    if(handle == -1) {
+        fio_printf(1, "Open file error!\n\r");
+        return;
+    }
+
+    char *buffer = "Test host_write function which can write data to output/syslog\n";
+    error = host_write(handle, (void *)buffer, strlen(buffer));
+    if(error != 0) {
+        fio_printf(1, "Write file error! Remain %d bytes didn't write in the file.\n\r", error);
+        host_close(handle);
+        return;
+    }
+
+    host_close(handle);
 }
 
 cmdfunc *do_command(const char *cmd){
