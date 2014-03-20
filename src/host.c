@@ -6,18 +6,6 @@ typedef union param_t{
 	char *pdChrPtr;
 } param;
 
-typedef struct open_param_t {
-    char *path; // File path
-    int mode;   // Open mode
-    int length; // File path length
-} open_param; 
-
-typedef struct write_param_t {
-    int handle; // File handle
-    char *data; // Data pointer
-    int size;   // Data length
-} write_param; 
-
 /*action will be in r0, and argv in r1*/
 int host_call(enum HOST_SYSCALL action, void *argv)
 {
@@ -40,13 +28,13 @@ int host_system(char *cmd){
 }
 
 int host_open(char *path, int mode) {
-    return host_call(SYS_OPEN, (open_param []){{.path=path}, {.mode=mode}, {.length=strlen(path)}});
+    return host_call(SYS_OPEN, (param []){{.pdChrPtr=path}, {.pdInt=mode}, {.pdInt=strlen(path)}});
 }
 
 int host_close(int handle) {
     return host_call(SYS_CLOSE, (param []){{.pdInt=handle}});
 }
 
-int host_write(int handle, char *data, int size) {
-    return host_call(SYS_WRITE, (write_param []){{.handle=handle}, {.data=data}, {.size=size}});
+int host_write(int handle, void *data, int size) {
+    return host_call(SYS_WRITE, (param []){{.pdInt=handle}, {.pdPtr=data}, {.pdInt=size}});
 }

@@ -34,5 +34,8 @@ enum HOST_SYSCALL{
 int host_call(enum HOST_SYSCALL, void *argv) __attribute__((naked));
 
 int host_system(char *cmd);
+int host_open(char *path, int mode);
+int host_close(int handle);
+int host_write(int handle, void *data, int size);
 
 #endif 
