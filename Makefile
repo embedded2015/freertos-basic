@@ -8,7 +8,8 @@ CFLAGS = -fno-common -O0 \
 	 -gdwarf-2 -ffreestanding -g3 \
 	 -mcpu=cortex-m3 -mthumb \
 	 -Wall -Werror \
-	 -Tmain.ld -nostartfiles
+	 -Tmain.ld -nostartfiles \
+	 -DUSER_NAME=\"$(USER)\"
 
 ARCH = CM3
 VENDOR = ST
