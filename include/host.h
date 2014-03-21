@@ -1,6 +1,7 @@
 #ifndef HOST_H
 #define HOST_H
 #include <string.h>
+#include <stdarg.h>
 
 
 /*
@@ -33,10 +34,10 @@ enum HOST_SYSCALL{
 
 int host_call(enum HOST_SYSCALL, void *argv) __attribute__((naked));
 
-int host_system(char *cmd);
-int host_open(char *path, int mode);
-int host_close(int handle);
-int host_write(int handle, void *data, int size);
+int host_system(va_list v1);
+int host_open(va_list v1);
+int host_close(va_list v1);
+int host_write(va_list v1);
 
 int host_action(enum HOST_SYSCALL action, ...);
 

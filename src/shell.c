@@ -124,7 +124,7 @@ void host_command(int n, char *argv[]){
             command[len - 1] = ' ';
         }
         command[len - 1] = '\0';
-        rnt=host_system(command);
+        rnt=host_action(SYS_SYSTEM, command);
         fio_printf(1, "\r\nfinish with exit code %d.\r\n", rnt);
     } 
     else {

@@ -116,7 +116,7 @@ void system_logger(void *pvParameters)
     int handle, error;
     const portTickType xDelay = 100000 / 100;
 
-    handle = host_open("output/syslog", 4);
+    handle = host_action(SYS_OPEN, "output/syslog", 4);
     if(handle == -1) {
         fio_printf(1, "Open file error!\n");
         return;
@@ -124,27 +124,27 @@ void system_logger(void *pvParameters)
 
     while(1) {
         memcpy(output, tag, strlen(tag));
-        error = host_write(handle, (void *)output, strlen(output));
+        error = host_action(SYS_WRITE, handle, (void *)output, strlen(output));
         if(error != 0) {
             fio_printf(1, "Write file error! Remain %d bytes didn't write in the file.\n\r", error);
-            host_close(handle);
+            host_action(SYS_CLOSE, handle);
             return;
         }
         vTaskList(buf);
 
         memcpy(output, (char *)(buf + 2), strlen((char *)buf) - 2);
 
-        error = host_write(handle, (void *)buf, strlen((char *)buf));
+        error = host_action(SYS_WRITE, handle, (void *)buf, strlen((char *)buf));
         if(error != 0) {
             fio_printf(1, "Write file error! Remain %d bytes didn't write in the file.\n\r", error);
-            host_close(handle);
+            host_action(SYS_CLOSE, handle);
             return;
         }
 
         vTaskDelay(xDelay);
     }
     
-    host_close(handle);
+    host_action(SYS_CLOSE, handle);
 }
 
 int main()
