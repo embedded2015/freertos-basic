@@ -38,4 +38,6 @@ int host_open(char *path, int mode);
 int host_close(int handle);
 int host_write(int handle, void *data, int size);
 
+int host_action(enum HOST_SYSCALL action, ...);
+
 #endif 

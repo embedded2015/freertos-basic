@@ -146,21 +146,21 @@ void test_command(int n, char *argv[]) {
 
     fio_printf(1, "\r\n");
 
-    handle = host_open("output/syslog", 8);
+    handle = host_action(SYS_OPEN, "output/syslog", 8);
     if(handle == -1) {
         fio_printf(1, "Open file error!\n\r");
         return;
     }
 
     char *buffer = "Test host_write function which can write data to output/syslog\n";
-    error = host_write(handle, (void *)buffer, strlen(buffer));
+    error = host_action(SYS_WRITE, handle, (void *)buffer, strlen(buffer));
     if(error != 0) {
         fio_printf(1, "Write file error! Remain %d bytes didn't write in the file.\n\r", error);
-        host_close(handle);
+        host_action(SYS_CLOSE, handle);
         return;
     }
 
-    host_close(handle);
+    host_action(SYS_CLOSE, handle);
 }
 
 cmdfunc *do_command(const char *cmd){
