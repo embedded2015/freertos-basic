@@ -68,8 +68,8 @@ int filedump(const char *filename){
 
 	int fd=fs_open(filename, 0, O_RDONLY);
 
-	if(fd==OPENFAIL)
-		return 0;
+	if( fd == -2 || fd == -1)
+		return fd;
 
 	fio_printf(1, "\r\n");
 
@@ -96,8 +96,12 @@ void cat_command(int n, char *argv[]){
 		return;
 	}
 
-	if(!filedump(argv[1]))
-		fio_printf(2, "\r\n%s no such file or directory.\r\n", argv[1]);
+    int dump_status = filedump(argv[1]);
+	if(dump_status == -1){
+		fio_printf(2, "\r\n%s : no such file or directory.\r\n", argv[1]);
+    }else if(dump_status == -2){
+		fio_printf(2, "\r\nFile system not registered.\r\n", argv[1]);
+    }
 }
 
 void man_command(int n, char *argv[]){
