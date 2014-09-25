@@ -14,7 +14,7 @@ qemudbg: $(BUILD_TARGET).bin $(QEMU_STM32)
 	    -gdb tcp::3333 -S \
 	    -kernel $(BUILD_TARGET).bin -semihosting 2>&1>/dev/null & \
 	echo $$! > $(OUTDIR)/qemu_pid && \
-	$(CROSS_COMPILE)gdbtui -x $(TOOLDIR)/gdbscript && \
+	$(CROSS_COMPILE)gdb -x $(TOOLDIR)/gdbscript && \
 	cat $(OUTDIR)/qemu_pid | `xargs kill 2>/dev/null || test true` && \
 	rm -f $(OUTDIR)/qemu_pid
 
