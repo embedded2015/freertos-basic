@@ -145,6 +145,9 @@ void test_command(int n, char *argv[]) {
     int error;
 
     fio_printf(1, "\r\n");
+    
+    handle = host_action(SYS_SYSTEM, "mkdir -p output");
+    handle = host_action(SYS_SYSTEM, "touch output/syslog");
 
     handle = host_action(SYS_OPEN, "output/syslog", 8);
     if(handle == -1) {
