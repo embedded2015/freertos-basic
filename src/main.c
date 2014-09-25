@@ -89,7 +89,7 @@ void command_prompt(void *pvParameters)
 {
 	char buf[128];
 	char *argv[20];
-        char hint[] = USER_NAME "@" USER_NAME "-STM32:~$ ";
+    char hint[] = USER_NAME "@" USER_NAME "-STM32:~$ ";
 
 	fio_printf(1, "\rWelcome to FreeRTOS Shell\r\n");
 	while(1){
@@ -165,6 +165,7 @@ int main()
 	 * Reference: www.freertos.org/a00116.html */
 	serial_rx_queue = xQueueCreate(1, sizeof(char));
 
+    register_devfs();
 	/* Create a task to output text read from romfs. */
 	xTaskCreate(command_prompt,
 	            (signed portCHAR *) "CLI",
