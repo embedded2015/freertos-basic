@@ -3,6 +3,7 @@
 #include <semphr.h>
 #include <unistd.h>
 #include "fio.h"
+#include "dir.h"
 #include "filesystem.h"
 #include "osdebug.h"
 #include "hash-djb2.h"
@@ -224,7 +225,16 @@ static int devfs_open(void * opaque, const char * path, int flags, int mode) {
     return -1;
 }
 
+static int devfs_open_dir(void * opaque, const char * path){
+    if( strlen(path) == 0 ){
+        // TODO : Add function
+        return dir_open(NULL,NULL,NULL); 
+    }else{
+        return OPENDIR_NOTFOUND;
+    }
+}
+
 void register_devfs() {
     DBGOUT("Registering devfs.\r\n");
-    register_fs("dev", devfs_open, NULL);
+    register_fs("dev", devfs_open, devfs_open_dir, NULL);
 }

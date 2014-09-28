@@ -11,6 +11,7 @@
 struct romfs_fds_t {
     const uint8_t * file;
     uint32_t cursor;
+    uint32_t size;
 };
 
 static struct romfs_fds_t romfs_fds[MAX_FDS];
@@ -21,8 +22,7 @@ static uint32_t get_unaligned(const uint8_t * d) {
 
 static ssize_t romfs_read(void * opaque, void * buf, size_t count) {
     struct romfs_fds_t * f = (struct romfs_fds_t *) opaque;
-    const uint8_t * size_p = f->file - 4;
-    uint32_t size = get_unaligned(size_p);
+    uint32_t size = f -> size;
     
     if ((f->cursor + count) > size)
         count = size - f->cursor;
@@ -35,8 +35,7 @@ static ssize_t romfs_read(void * opaque, void * buf, size_t count) {
 
 static off_t romfs_seek(void * opaque, off_t offset, int whence) {
     struct romfs_fds_t * f = (struct romfs_fds_t *) opaque;
-    const uint8_t * size_p = f->file - 4;
-    uint32_t size = get_unaligned(size_p);
+    uint32_t size = f->size; 
     uint32_t origin;
     
     switch (whence) {
@@ -68,12 +67,12 @@ static off_t romfs_seek(void * opaque, off_t offset, int whence) {
 const uint8_t * romfs_get_file_by_hash(const uint8_t * romfs, uint32_t h, uint32_t * len) {
     const uint8_t * meta;
 
-    for (meta = romfs; get_unaligned(meta) && get_unaligned(meta + 4); meta += get_unaligned(meta + 4) + 8) {
+    for (meta = romfs; get_unaligned(meta) && get_unaligned(meta + 4); meta += get_unaligned(meta + 4) + 12) {
         if (get_unaligned(meta) == h) {
             if (len) {
                 *len = get_unaligned(meta + 4);
             }
-            return meta + 8;
+            return meta + 12;
         }
     }
 
@@ -91,8 +90,14 @@ static int romfs_open(void * opaque, const char * path, int flags, int mode) {
     if (file) {
         r = fio_open(romfs_read, NULL, romfs_seek, NULL, NULL);
         if (r > 0) {
-            romfs_fds[r].file = file;
+            uint32_t size = get_unaligned(file - 8);
+            const uint8_t *filestart = file;
+            while(*filestart) ++filestart;
+            ++filestart;
+            size -= filestart - file;
+            romfs_fds[r].file = filestart;
             romfs_fds[r].cursor = 0;
+            romfs_fds[r].size = size;
             fio_set_opaque(r, romfs_fds + r);
         }
     }
@@ -101,5 +106,5 @@ static int romfs_open(void * opaque, const char * path, int flags, int mode) {
 
 void register_romfs(const char * mountpoint, const uint8_t * romfs) {
 //    DBGOUT("Registering romfs `%s' @ %p\r\n", mountpoint, romfs);
-    register_fs(mountpoint, romfs_open, (void *) romfs);
+    register_fs(mountpoint, romfs_open, NULL, (void *) romfs);
 }
