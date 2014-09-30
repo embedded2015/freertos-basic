@@ -66,6 +66,7 @@ void ls_command(int n, char *argv[]){
         dir = fs_opendir("");
     }else if(n == 1){
         dir = fs_opendir(argv[1]);
+        //if(dir == )
     }else{
         fio_printf(1, "Too many argument!\r\n");
         return;
@@ -125,7 +126,8 @@ void man_command(int n, char *argv[]){
 	char buf[128]="/romfs/manual/";
 	strcat(buf, argv[1]);
 
-	if(!filedump(buf))
+    int dump_status = filedump(buf);
+	if(dump_status < 0)
 		fio_printf(2, "\r\nManual not available.\r\n");
 }
 
