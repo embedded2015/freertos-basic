@@ -24,6 +24,7 @@ void help_command(int, char **);
 void host_command(int, char **);
 void mmtest_command(int, char **);
 void test_command(int, char **);
+void _command(int, char **);
 
 #define MKCL(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
 
@@ -35,7 +36,8 @@ cmdlist cl[]={
 	MKCL(host, "Run command on host"),
 	MKCL(mmtest, "heap memory allocation test"),
 	MKCL(help, "help"),
-	MKCL(test, "test new function")
+	MKCL(test, "test new function"),
+	MKCL(, ""),
 };
 
 int parse_command(char *str, char *argv[]){
@@ -153,7 +155,7 @@ void host_command(int n, char *argv[]){
 void help_command(int n,char *argv[]){
 	int i;
 	fio_printf(1, "\r\n");
-	for(i=0;i<sizeof(cl)/sizeof(cl[0]); ++i){
+	for(i = 0;i < sizeof(cl)/sizeof(cl[0]) - 1; ++i){
 		fio_printf(1, "%s - %s\r\n", cl[i].name, cl[i].desc);
 	}
 }
@@ -182,6 +184,11 @@ void test_command(int n, char *argv[]) {
     }
 
     host_action(SYS_CLOSE, handle);
+}
+
+void _command(int n, char *argv[]){
+    (void)n; (void)argv;
+    fio_printf(1, "\r\n");
 }
 
 cmdfunc *do_command(const char *cmd){
