@@ -1,7 +1,15 @@
 A FreeRTOS distribution for STM32-P103 with customized features
 
 Contributors:
-Jim Huang <jserv.tw@gmail.com>
-Zhe-An Lin <xq5530303@gmail.com>
-Tim Hsu <tim37021@gmail.com>
-Rampant <rampant1018@gmail.com>
+  Zhe-An Lin <xq5530303@gmail.com>
+  Jim Huang <jserv.tw@gmail.com>
+  Tim Hsu <tim37021@gmail.com>                                                  
+  Jeff Liaw <rampant1018@gmail.com>
+  Eddy Wu <yukkcake@gmail.com>
+
+External source from FreeRTOS is copyrighted by:
+  Real Time Engineers Ltd.
+
+External source from CMSIS/ST is copyrighted by:
+  STMicroelectronics
+  ARM Ltd
