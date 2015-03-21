@@ -18,7 +18,7 @@ enum KeyName{ESC=27, BACKSPACE=127};
 
 /* Imple */
 static ssize_t stdin_read(void * opaque, void * buf, size_t count) {
-    int i=0, endofline=0, last_chr_is_esc;
+    int i=0, endofline=0, last_chr_is_esc = 0;
     char *ptrbuf=buf;
     char ch;
     while(i < count&&endofline!=1){

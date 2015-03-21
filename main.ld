@@ -14,6 +14,7 @@ SECTIONS
  		*(.text)
  		*(.text.*)
 		*(.rodata)
+		*(.rodata*)
 		_sromfs = .;
                 *(.rom*)
 		_eromfs = .;

@@ -306,7 +306,7 @@ void vPortFree( void *pv )
 
         vTaskSuspendAll();
         {
-            xBlockLink *previousPrevious, *previous, *successor;
+            xBlockLink *previousPrevious, *previous, *successor = 0;
 
             previousPrevious = NULL;
             previous = &xStartAddr;
