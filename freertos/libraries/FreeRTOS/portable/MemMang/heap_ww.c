@@ -318,6 +318,11 @@ void vPortFree( void *pv )
                 previous = successor;
             }
 
+	    /* We need to re-caculate the xFreeBytesRemaining before
+	       pxLink->xBlockSize is updated in the following 'if'
+	       statements. */
+            xFreeBytesRemaining += pxLink->xBlockSize;
+
             if (successor != &xEnd && END_OF_BLOCK(pxLink) == successor) {
                 /* contiguous with successor, so they can be merged */
                 prvRemoveFromFreeList(successor, previous);
@@ -332,7 +337,6 @@ void vPortFree( void *pv )
             }
 
             prvInsertBlockIntoFreeList( ( ( xBlockLink * ) pxLink ) );
-            xFreeBytesRemaining += pxLink->xBlockSize;
         }
         xTaskResumeAll();
     }
